@@ -53,31 +53,34 @@ tabAndEnter(9)
 sleep(5)
 
 ## Followers Screen
-tabAndEnter(4, False)
-active = driver.switch_to.active_element
-no_followers = int(active.find_element(By.TAG_NAME, "span").get_attribute("title"))
-print(no_followers)
-if no_followers < exhaustlimit:
-    exhaustlimit = no_followers
-tabAndEnter(0)
-sleep(2)
-tabAndEnter(1, False)
-close_button = driver.switch_to.active_element
-tabAndEnter(2, False)
 
 def scrapeFollowers():
-    count = 0
+    exhaustlimit = 500
+    tabAndEnter(4, False)
+    active = driver.switch_to.active_element
+    no_followers = int(active.find_element(By.TAG_NAME, "span").get_attribute("title"))
+    print(no_followers)
+    if no_followers < exhaustlimit:
+        exhaustlimit = no_followers
+    tabAndEnter(0)
+    sleep(2)
+    tabAndEnter(1, False)
+    close_button = driver.switch_to.active_element
+    tabAndEnter(2, False)
+    count = 1
     # bad = 10
+    follow = None
     tabs = None
+    blue = None
     with open("./followers.csv", mode="a+", newline="") as file:
         writer = csv.writer(file)
         
-        while(count != exhaustlimit):
+        while(count < exhaustlimit):
             active = driver.switch_to.active_element
 
                 
-            print(active, active.tag_name)
-            if active.tag_name == "button":
+            # print(active, active.tag_name)
+            while active.tag_name == "button" and active.text != "Remove":
                 ActionChains(driver)\
                 .key_down(Keys.SHIFT)\
                 .key_down(Keys.TAB)\
@@ -87,7 +90,8 @@ def scrapeFollowers():
                 .perform()
                 sleep(2)
                 tabAndEnter(1, False)
-            
+                active = driver.switch_to.active_element
+
             active = driver.switch_to.active_element
             try:
                 # if image tag is present
@@ -99,31 +103,134 @@ def scrapeFollowers():
             profile_name = getProfileName(profile_link)
             
             if imgtag == None:
-                imgtag = "False"
-                profile_img = None
+                # imgtag = "False"
+                profile_img = "False"
+                try:
+                    blue_check = driver.switch_to.active_element.find_element(By.TAG_NAME, "div")
+                    blue_check = blue_check.find_element(By.TAG_NAME, "div")
+                    blue_check = blue_check.find_element(By.TAG_NAME, "div")
+                    blue_check = blue_check.find_element(By.TAG_NAME, "svg")
+                    if blue_check.tag_name == "svg":
+                        blue = "True"
+                except:
+                    blue = "False"
                 tabAndEnter(1, False)
                 active = driver.switch_to.active_element
-                print(active.text)
-                print(active)
+                # print(active.text)
+                # print(active)
                 if active.text == "Follow":
-                    print("reached")
+                    # print("reached")
+                    follow = "False"
                     tabs = 2
                 else:
+                    follow = "True"
                     tabs = 1
             else:
                 profile_img = imgtag.get_attribute("src")
-                tabAndEnter(2, False)
+                tabAndEnter(1, False)
+                try:
+                    blue_check = driver.switch_to.active_element.find_element(By.TAG_NAME, "div")
+                    blue_check = blue_check.find_element(By.TAG_NAME, "div")
+                    blue_check = blue_check.find_element(By.TAG_NAME, "div")
+                    blue_check = blue_check.find_element(By.TAG_NAME, "svg")
+                    if blue_check.tag_name == "svg":
+                        blue = "True"
+                except:
+                    blue = "False"
+                tabAndEnter(1, False)
                 active = driver.switch_to.active_element
                 if active.text == "Follow":
+                    follow = "False"
                     tabs = 2
                 else:
+                    follow = "True"
                     tabs = 1
             count += 1
 
-            writer.writerow([profile_name, profile_link, profile_img])
-            print(f"Profile Name: {profile_name}\nProfile Link: {profile_link}\nProfile Image: {profile_img}")
+            writer.writerow([profile_name, profile_link, profile_img, follow, blue])
+            print(f"Profile Name: {profile_name}\nProfile Link: {profile_link}\nProfile Image: {profile_img}\n Follow: {follow}\n Blue Check: {blue}")
             tabAndEnter(tabs, False)
-            
+    
+    file.close()
     close_button.click()
     
-driver.__exit__()
+    
+def scrapeFollowing():
+    exhaustlimit = 500
+    tabAndEnter(1, False)
+    no_following = int(driver.switch_to.active_element.find_element(By.TAG_NAME, "span").get_attribute("title"))
+    if no_following < exhaustlimit:
+        exhaustlimit = no_following
+    sleep(2)
+    print("reached")
+    count = 1
+    tabAndEnter(1, False)
+    close_button = driver.switch_to.active_element
+    tabs = None
+    blue = None
+    tabAndEnter(2, False)
+    with open("./following.csv", mode="a+", newline="") as file:
+        writer = csv.writer(file)
+        
+        while(count <= exhaustlimit):
+            active = driver.switch_to.active_element
+            
+            while active.tag_name == "button" and active.text !=    "Following":
+                ActionChains(driver)\
+                .key_down(Keys.SHIFT)\
+                .key_down(Keys.TAB)\
+                .perform()
+                ActionChains(driver)\
+                .key_up(Keys.SHIFT)\
+                .perform()
+                sleep(2)
+                tabAndEnter(1, False)
+                active = driver.switch_to.active_element
+                
+            active = driver.switch_to.active_element
+            try:
+                # if image tag is present
+                imgtag = active.find_element(By.TAG_NAME, "img")
+            except:
+                # if not present
+                imgtag = None
+            profile_link = active.get_attribute("href")[:-10] # gets profile link
+            profile_name = getProfileName(profile_link)
+
+            if imgtag == None:
+                profile_img = "False"
+                try:
+                    blue_check = driver.switch_to.active_element.find_element(By.TAG_NAME, "div")
+                    blue_check = blue_check.find_element(By.TAG_NAME, "div")
+                    blue_check = blue_check.find_element(By.TAG_NAME, "div")
+                    blue_check = blue_check.find_element(By.TAG_NAME, "svg")
+                    if blue_check.tag_name == "svg":
+                        blue = "True"
+                except:
+                    blue = "False"
+                tabAndEnter(2, False)
+            else:
+                profile_img = imgtag.get_attribute("src")
+                tabAndEnter(1, False)
+                try:
+                    blue_check = driver.switch_to.active_element.find_element(By.TAG_NAME, "div")
+                    blue_check = blue_check.find_element(By.TAG_NAME, "div")
+                    blue_check = blue_check.find_element(By.TAG_NAME, "div")
+                    blue_check = blue_check.find_element(By.TAG_NAME, "svg")
+                    if blue_check.tag_name == "svg":
+                        blue = "True"
+                except:
+                    blue = "False"
+                tabAndEnter(2, False)
+            count += 1
+                
+            writer.writerow([profile_name, profile_link, profile_img, blue])
+            print(f"Profile Name: {profile_name}\nProfile Link: {profile_link}\nProfile Image: {profile_img}\n Blue Check: {blue}")
+            
+    file.close()
+    close_button.click()
+            
+scrapeFollowers()
+sleep(2)
+scrapeFollowing()
+driver.quit()
