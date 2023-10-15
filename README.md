@@ -42,7 +42,6 @@ Follow these steps to set up the project:
     
 3.  Install the required packages by running:
     
-    bashCopy code
     
     `pip install -r requirements.txt` 
     
