@@ -104,10 +104,10 @@ An example data, "f1" Instagram profile of followers and following has been scra
 
 ## 7. Contributions and Feedback <a name="contributions-and-feedback"></a>
 
-Contributions, suggestions for improvements, and bug reports are always welcomed. Please feel free to open issues or submit pull requests on the project's [GitHub repository](https://chat.openai.com/c/a1ae3a97-ffbc-4260-9a4a-b4610002323d#).
+Contributions, suggestions for improvements, and bug reports are always welcomed. Please feel free to open issues or submit pull requests on the project's [GitHub repository](/).
 
 ## 8. License <a name="license"></a>
 
-This project is licensed under the [MIT License](https://chat.openai.com/c/LICENSE). You are free to use, modify, and distribute the code as per the terms of the license.
+This project is licensed under the [MIT License](/). You are free to use, modify, and distribute the code as per the terms of the license.
 
 **Disclaimer:** This project is for educational and informational purposes only. Use it responsibly and in compliance with Instagram's terms of service and policies. The owner of the repository is not responsible for any misuse or violations.
